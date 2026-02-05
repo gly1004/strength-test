@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>진로성격강점검사</title>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -1056,7 +1057,7 @@
 
             <div class="top-strengths" id="top-strengths"></div>
 
-            <button class="print-btn" onclick="window.print()">결과 인쇄/저장하기</button>
+            <button class="print-btn" onclick="saveResult()">결과 저장하기</button>
             <button class="restart-btn" onclick="restartTest()">다시 검사하기</button>
 
             <div class="footer-note">
@@ -1891,6 +1892,41 @@
 
             // Reset page title
             document.title = '진로성격강점검사';
+        }
+
+        function saveResult() {
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+            if (isMobile) {
+                // 모바일: 이미지로 저장
+                const resultsSection = document.getElementById('results-section');
+                const buttons = resultsSection.querySelectorAll('.print-btn, .restart-btn');
+
+                // 버튼 임시 숨김
+                buttons.forEach(btn => btn.style.display = 'none');
+
+                html2canvas(resultsSection, {
+                    backgroundColor: '#1a1a2e',
+                    scale: 2,
+                    useCORS: true,
+                    logging: false
+                }).then(canvas => {
+                    // 버튼 다시 표시
+                    buttons.forEach(btn => btn.style.display = '');
+
+                    // 이미지 다운로드
+                    const link = document.createElement('a');
+                    link.download = `진로성격강점검사_${childName}_결과.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                }).catch(err => {
+                    buttons.forEach(btn => btn.style.display = '');
+                    alert('저장 중 오류가 발생했습니다. 스크린샷을 이용해 주세요.');
+                });
+            } else {
+                // PC: 인쇄 기능
+                window.print();
+            }
         }
     </script>
 </body>
